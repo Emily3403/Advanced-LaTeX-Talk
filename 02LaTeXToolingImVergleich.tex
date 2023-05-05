@@ -1,0 +1,129 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+
+
+\section{\LaTeX{} Tooling im Vergleich}
+
+
+\begin{frame}{\LaTeX{} Tooling: Wie installieren?}
+    \begin{itemize}
+        \item Linux
+        \begin{itemize}
+            \item \TeX{}Live durch den Paketmanager installieren
+            \item \texttt{sudo apt install texlive-latex-extra}
+            \item \texttt{sudo pacman -S texlive-most}
+            \item \texttt{sudo dnf install texlive-scheme-medium}
+        \end{itemize}
+        \pause
+        \medskip
+        \item macOS
+        \begin{itemize}
+            \item MacTeX
+            \item \texttt{brew cask install mactex}
+        \end{itemize}
+        \pause
+        \medskip
+        \item Windows
+        \begin{itemize}
+            \item \href{https://tex.stackexchange.com/questions/20036/what-are-the-advantages-of-tex-live-over-miktex}{MiK\TeX{} / \TeX{}Live}
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{\LaTeX{} Tooling: MiK\TeX{} vs.\ \TeX Live}
+    \begin{table}
+        \centering
+        \label{tab:ComparisonOfMiKTeXvsTeXLive}
+        \begin{tabularx}{\textwidth}{l*{2}{>{\centering\arraybackslash}X}}
+            \toprule
+            & MiK\TeX          & \TeX Live          \\\midrule
+            Anzahl Pakete & Wenig            & Viel               \\
+            \makecell[l]{\enquote{on-the-fly} \\Pakete installieren}\rule[-18pt]{0pt}{0pt} \rule{0pt}{25pt}   & \check           & \cross             \\
+            Open-Source      & \check & \check               \\
+            Platform    & (Primär) Windows & Alle \\
+            Maintainer    & Christian Schenk & \TeX{} Users Group \\
+            \bottomrule
+        \end{tabularx}
+    \end{table}
+    \pause
+    \medskip
+    \begin{center}
+        Was ist schneller?\pause → \href{https://tex.stackexchange.com/a/20037}{\TeX Live}
+    \end{center}
+\end{frame}
+
+\begin{frame}{\LaTeX{} Tooling: Übersicht Editoren}
+    \begin{itemize}
+        \item Online Editor
+        \pause
+        \begin{itemize}
+            \item Overleaf
+        \end{itemize}
+        \pause
+        \medskip
+        \item \href{https://tex.stackexchange.com/questions/339/latex-editors-ides}{Lokaler Editor}
+        \pause
+        \begin{itemize}
+            \item Dedizierte IDE
+            \begin{itemize}
+                \item \TeX{}Studio
+                \item \TeX{}Maker
+                \item LyX
+            \end{itemize}
+            \pause
+            \medskip
+            \item IDE mit LSP / Plugin support
+            \begin{itemize}
+                \item Visual Studio Code
+                \item IntelliJ IDEA
+                \item vim / emacs
+            \end{itemize}
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{\LaTeX{} Tooling: Übersicht PDF Viewer}
+    \begin{itemize}
+        \item \textcolor{red}{Nicht alle PDF viewer sind gleich!}
+        \pause
+        \medskip
+        \item Auto-refresh
+        \pause
+        \item Forward / Backward Search
+        \pause
+        \item Reverse-Jump
+        \pause
+        \item SyncTeX (zur relevanten Seite scrollen)
+        \pause
+        \item Platform
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{\LaTeX{} Tooling: Vergleich von PDF-Viewern}
+    \begin{table}[h]
+        \centering
+        \hspace*{-17pt}
+        \begin{tabularx}{1.1\textwidth}{l*{6}{>{\centering\arraybackslash}X}}
+            \toprule
+            & Auto-Refresh & F/B-Search & Reverse-Jump & SyncTeX & Platform \\
+            \midrule
+            Okular     & \check       & \check     & \check       & \check  & Alle     \\
+            Evince     & \check       & \check     & \check       & \check  & Alle     \\
+            SumatraPDF & \check       & \check     & \check       & \check  & Windows  \\
+            \arrayrulecolor{white!60!black}
+            \hline
+            Overleaf   & \check       & \check     & \cross       & \check  & Alle     \\
+            Chromium   & \cross       & \cross     & \cross       & \cross  & Alle     \\
+            Firefox    & \cross       & \cross     & \cross       & \cross  & Alle     \\
+            \hline
+            Preview    & \cross       & \cross     & \check       & \cross  & macOS    \\
+            Skim       & \check       & \check     & \check       & \check  & macOS    \\
+            \arrayrulecolor{black}
+            \bottomrule
+        \end{tabularx}
+    \end{table}
+\end{frame}
+
+
+\end{document}

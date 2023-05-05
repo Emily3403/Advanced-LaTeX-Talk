@@ -1,0 +1,202 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+
+\section{Schnelle Compiles mit \LaTeX}
+
+\begin{frame}{Schnelle Compiles: Warum?}
+    \only<1-4, 10-14>{
+        \begin{itemize}
+        \only<1-5, 10->{\item \LaTeX{} wird kompiliert, es ist nicht WYSIWYG}
+        \onslide<2-5, 10->{\item Bis das Dokument kompiliert ist, gibt es kein Feedback}
+        \onslide<3-5, 10->{
+            \begin{itemize}
+            \item Positionierung von Bildern
+            \item TikZ Grafiken
+            \item \ldots
+            \end{itemize}
+        }
+        \medskip
+        \onslide<4-, 10->{\item Feedback Cycle}
+        \medskip
+        \onslide<11->{\item Verschiedene Optimierungsdimensionen}
+        \begin{enumerate}
+        \onslide<12->{\item Beschleunigen des Codes}
+        \onslide<13->{\item Reduzieren der zu verarbeitenden Code-Menge}
+        \onslide<14->{\item TikZ}
+        \end{enumerate}
+        \end{itemize}
+    }
+
+    \only<5-9>{
+        \begin{center}
+            \begin{tikzpicture}[
+                node distance = 3cm,
+                auto,
+                every node/.style={align=center, font=\small},
+                process/.style={draw, circle, rounded corners, inner sep=0pt, minimum width=42pt},
+                arrowlabel/.style={midway, align=center, font=\footnotesize}
+            ]
+
+                % Nodes
+                \node[process, initial by arrow, initial text=] (edit) {Edit};
+                \node[process, right=of edit] (compile) {Compile};
+                \node[process, below=of $(edit)!0.5!(compile)$] (review) {Review};
+
+                % Arrows
+                \onslide<6-9>{\draw[->, thick, bend left=45] (edit) to node[arrowlabel] {Start compilation} (compile);}
+
+                \onslide<7-9>{\draw[->, thick, bend left=45] (compile) to node[arrowlabel] {Wait for\\compilation} (review);}
+                \onslide<9>{\draw[->, thick, red, bend left=45] (compile) to node[arrowlabel] {Wait for\\compilation} (review);}
+
+                \onslide<8-9>{\draw[->, thick, bend left=45] (review) to node[arrowlabel, pos=0.4] {Respond to\\changes} (edit);}
+
+            \end{tikzpicture}
+        \end{center}
+    }
+
+\end{frame}
+
+\begin{frame}{Schnelle Compiles: Beschleunigen des Codes}
+    \begin{itemize}
+        \item Vermeiden von unnötigen Paketen
+        \begin{itemize}
+            \item TikZ
+            \item Bib(La)\TeX
+            \item minted
+        \end{itemize}
+        \pause
+        \medskip
+        \item \href{https://tex.stackexchange.com/a/8793}{Trojanische Pferde} vermeiden
+        \begin{itemize}
+            \item Pakete, die als Dependency ein langsames Paket haben
+        \end{itemize}
+        \pause
+        \medskip
+        \item Caches nutzen: Build Artefakte nicht löschen
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Schnelle Compiles: Optimieren von Grafiken}
+    \begin{itemize}
+        \item Auflösung anpassen
+        \begin{itemize}
+            \item Reduzieren der Auflösung (4k $\to$ 1080p)
+            \item[$\to$] Schnellere Verarbeitung
+        \end{itemize}
+        \pause
+        \medskip
+        \item In \texttt{.pdf} konvertieren
+        \begin{itemize}
+            \item Natives Format für \LaTeX-Ausgabe
+            \item Keine zusätzliche Formatkonvertierung
+            \item[$\to$] Kürzere Kompilierungszeit
+        \end{itemize}
+        \pause
+        \medskip
+        \item Kann automatisch gemacht werden:
+        \begin{Verbatim}
+find . -type f -exec file --mime-type {} \+  |
+awk -F: '{if ($2 ~/image\//) print $1}'      |
+xargs -P "$(nproc)" -I it                    \
+sh -c 'img2pdf $1 -o ${1%.*}.pdf' -- it $argv
+        \end{Verbatim}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Schnelle Compiles: Reduzieren der Code-Menge}
+    \begin{itemize}
+        \item Beispiel: Dokument von 100 Seiten
+        \item Meist wird nur 1 aktiv bearbeitet, warum alle kompilieren?
+        \pause
+        \bigskip
+        \item \verb|\usepackage{subfiles}|: Zerteilen des Projekts
+        \item Jedes Teildokument kann separat kompiliert werden
+        \pause
+        \bigskip
+        \item Jedes Teildokument ist ein vollständiges \LaTeX-Dokument
+        \item Die main Datei bekommt den Inhalt der Subfile
+        \item Die Subfile bekommt die Präambel der main Datei
+        \pause
+        \bigskip
+        \item Wird transparent von \verb|\documentclass{subfiles}| gemacht
+        \item Minimaler Overhead
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]{Schnelle Compiles: Precompiled Header}
+    \begin{itemize}
+        \item Die Präambel des Dokuments ändert sich (fast) nie
+        \item Warum wird die immer wieder aufs neue kompiliert?
+        \pause
+        \medskip
+        \item Abspeichern des Zustands am Ende der Präambel
+        \pfeil{Kann bei der nächsten Kompilation geladen werden}
+        \pause
+        \medskip
+        \item Mit dem Paket \texttt{mylatexformat} möglich:
+        \begin{verbatim}
+pdflatex -ini -jobname="main" "&pdflatex" \
+mylatexformat.ltx main.tex
+        \end{verbatim}
+        \pause
+        \vspace{-15pt}
+        \item Heraus kommt eine $\sim$10MB Binärdatei
+        \item Kann über den Header \verb|%&main| eingebunden werden
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Schnelle Compiles: Externalisierung von TikZ Bildern}
+    \begin{itemize}
+        \item Beispiel: Dokument mit 20 schönen TikZ Bildern.
+        \item Keins ist unnötig, alle sollen gerendert werden
+        \pause
+        \pfeil{Externalisierung nutzen}
+        \medskip
+        \pause
+        \item TikZ-Bilder in separate PDFs speichern
+        \pause
+        \item Einfügen der PDFs in Hauptdokument
+        \pause
+        \item Beschleunigung durch Vermeidung von Neuberechnungen
+        \pause
+        \item Aktualisierung nur bei Änderungen erforderlich
+        \pause
+        \medskip
+        \item Mit \texttt{[list and make]} ist parallele Verarbeitung möglich!
+        \pfeil{Bisschen komplizierter, \href{https://tikz.dev/library-external}{zum lesen}}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Schnelle Compiles: Fallbeispiel}
+    \begin{itemize}
+        \item Diese Präsentation ist mit \LaTeX-Beamer erstellt
+        \pause
+        \item Es dauert 32s um die Präsentation \textit{vollständig} zu kompilieren
+        \pause
+        \pfeil{3 compile Runs + 1 biber Run}
+        \medskip
+        \pause
+        \item Ein compile Run dauert 7s
+        \pause
+        \item Mit Format-File (Template) 6s 500ms
+    \end{itemize}
+    \pause
+    \begin{tabularx}{\textwidth}{C{50pt}*{2}X}
+        \toprule
+        Subfile & Ohne Template & Mit Template \\
+        \midrule
+        0       & 1s 300ms      & 600ms        \\
+        1       & 3s            & 2s 200ms     \\
+        2       & 1s 400ms      & 730ms        \\
+        3       & 2s            & 1s 200ms     \\
+        4       & 1s 400ms      & 700ms        \\
+        5       & 1s 300ms      & 600ms        \\
+        6       & 3s 300ms      & 2s 500ms     \\
+        \bottomrule
+    \end{tabularx}
+\end{frame}
+
+
+\end{document}

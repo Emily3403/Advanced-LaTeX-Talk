@@ -1,0 +1,418 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+\section{TikZ}
+
+\begin{frame}[fragile]{TikZ (ist kein Zeichenprogramm)}
+    \begin{itemize}
+        \item Mit TikZ wird nicht gezeichnet, es wird programmiert
+        \pause
+        \begin{verbatim}
+    \begin{tikzpicture}
+        \node at (0, 0) {Hello, World!};
+    \end{tikzpicture}
+        \end{verbatim}
+        \vspace{-12pt}
+        \pause
+        \item Sehr gutes \href{https://ctan.mc1.root.project-creative.net/graphics/pgf/base/doc/pgfmanual.pdf}{Manual}: 1300 Seiten, 24 Seiten Inhaltsverzeichnis
+        \medskip
+        \pause
+        \item Erweiterbarkeit: \verb|\usetikzlibrary{...}|
+        \begin{itemize}
+            \item positioning
+            \item calc
+            \item shapes
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{TikZ (ist kein Zeichenprogramm)}
+    \begin{itemize}
+        \item Befehle für das Zeichnen
+        \pause
+        \begin{itemize}
+            \item \verb|\node|
+            \item \verb|\draw|
+            \item \verb|\fill|
+        \end{itemize}
+        \pause
+        \medskip
+        \item Koordinaten
+        \begin{itemize}
+            \item Normal: \texttt{(x, y)}
+            \item Polar: \texttt{(a:b:r)}
+        \end{itemize}
+        \pause
+        \medskip
+        \item Positionierung neben anderen Nodes
+        \begin{verbatim}
+    \node (hello) at (0, 0) {Hello, World!};
+    \node[left=of hello] {Bonjour};
+        \end{verbatim}
+    \end{itemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{TikZ Optionen}
+    \begin{itemize}
+        \item Dem \verb|tikzpicture| können optionen mitgegeben werden
+        \pause
+        \medskip
+        \item Im Nachhinein kann die Größe des Bildes angepasst werden
+        \begin{itemize}
+            \item[$\to$] \verb|\begin{tikzpicture}[scale=2]|
+        \end{itemize}
+        \pause
+        \medskip
+        \item Auch nodes sowie die meisten Befehle unterstützen das
+        \begin{itemize}
+            \item Rotation: \texttt{[rotate=45]}
+            \item Farben: \texttt{[red]}, \texttt{[blue]}, \texttt{[orange]}
+            \item Shift: \texttt{[xshift=1cm]} / \texttt{[yshift-0.5mm]}
+        \end{itemize}
+        \pause
+        \medskip
+        \item Klassischerweise: $y$-Achse im Koordinatensystem nach oben
+        \item Kann geändert werden!
+        \begin{itemize}
+            \item[$\to$] \verb|\begin{tikzpicture}[yscale=-1]|
+        \end{itemize}
+        \pause
+        \medskip
+        \item TikZ unterstützt auch animationen!
+        \begin{verbatim}
+    \uncover<1-2>{\node at (0, 0) {Hello, World!};}
+        \end{verbatim}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]{TikZ \textit{in action}}
+    \begin{onlyenv}%
+        <1, 3, 5, 7, 9>
+        \begin{minted}[style=autumn]{latex}
+\node (biblatex) {BibLaTeX};
+\node[below=6cm of biblatex] (natbib) {natbib};
+        \end{minted}
+    \end{onlyenv}
+
+    \begin{onlyenv}%
+        <3, 5, 7, 9>
+        \begin{minted}[style=autumn]{latex}
+\node[below=of biblatex] (s biblatex) {Setup};
+\node[above=of natbib] (s natbib) {Setup};
+        \end{minted}
+    \end{onlyenv}
+
+    \begin{onlyenv}%
+        <5, 7, 9>
+        \begin{minted}[style=autumn]{latex}
+\node[right=of s biblatex] (1c biblatex) {1.Compile};
+\node[right=of s natbib] (1c natbib) {1.Compile};
+        \end{minted}
+    \end{onlyenv}
+
+    \begin{onlyenv}%
+        <7, 9>
+        \begin{minted}[style=autumn]{latex}
+\node[right=of 1c biblatex] (biber) {Biber};
+\node[right=of 1c natbib] (bibtex) {BibTeX};
+        \end{minted}
+    \end{onlyenv}
+
+    \begin{onlyenv}%
+    <9>
+        \begin{minted}[style=autumn]{latex}
+\node[right=of $(biber)!0.5!(bibtex)$] (2 compile)     {2. Compile};
+        \end{minted}
+    \end{onlyenv}
+
+    \begin{onlyenv}%
+        <2, 4, 6, 8, 10>
+        \begin{center}
+            \advance\leftskip-25pt
+            \vspace{-18pt}
+            \def\colorSetup{ForestGreen}
+            \def\colorCompile{VioletRed}
+            \def\colorBackend{DeepSkyBlue}
+
+            \begin{tikzpicture}
+                [
+                block/.style={rectangle, draw, minimum height=1cm, minimum width=2cm, align=center, thick},
+                init/.style={initial by arrow, initial text=},
+                arrow/.style={->,>=stealth},
+                every initial by arrow/.style=arrow,
+                every accepting by arrow/.style=arrow,
+                ]
+
+                % Frontend Nodes
+                \uncover<2->{\node[block, init] (biblatex) {BibLaTeX};}
+                \uncover<2->{\node[block, init, below=6cm of biblatex] (natbib) {natbib};}
+
+                % Setup Nodes and their descriptions
+                \uncover<4->{\node[block, below=2.25cm of biblatex.west, anchor=west, draw=\colorSetup] (setup biblatex) {Setup};}
+
+                \uncover<4->{\node[block, above=2.25cm of natbib.west, anchor=west, draw=\colorSetup] (setup natbib) {Setup};}
+
+                % Compilation Nodes
+                \uncover<6->{\node[block, right=0.7cm of setup biblatex, draw=\colorCompile] (1 compile biblatex) {1. Compile};}
+                \uncover<6->{\node[block, right=0.7cm of setup natbib, draw=\colorCompile] (1 compile natbib) {1. Compile};}
+
+                % Backend Nodes
+                \uncover<8->{\node[block, right=1.25cm of 1 compile biblatex, draw=\colorBackend] (biber) {Biber};}
+                \uncover<8->{\node[block, right=1.25cm of 1 compile natbib, draw=\colorBackend] (bibtex) {BibTeX};}
+
+                % Last Compilation nodes
+                \uncover<10->{\node[block, right=2.1cm of $(biber)!0.5!(bibtex)$, accepting by arrow, draw=\colorCompile] (2 compile) {2. Compile};}
+
+            \end{tikzpicture}
+        \end{center}
+    \end{onlyenv}
+
+\end{frame}
+
+\begin{frame}[fragile]{TikZ \textit{in action}}
+    \begin{onlyenv}%
+        <1, 3, 5, 7>
+        \begin{minted}[style=autumn]{latex}
+\draw[->] (biblatex) -- (setup biblatex);
+\draw (natbib) -> (setup natbib);
+        \end{minted}
+    \end{onlyenv}
+
+    \begin{onlyenv}%
+        <3, 5, 7>
+        \begin{minted}[style=autumn]{latex}
+\draw[->] (setup biblatex) --  (1c biblatex);
+\draw[->] (setup natbib) -- (1c natbib);
+        \end{minted}
+    \end{onlyenv}
+
+    \begin{onlyenv}%
+        <5, 7>
+        \begin{minted}[style=autumn]{latex}
+\draw[->] (1c natbib) -- node[above] {.aux} (bibtex);
+\draw[->] (1c biblatex) -- node[above] {.aux} node[below] {.bcf} (biber);
+\draw[->] (1c biblatex) -- node[above right=-0.1] {.aux} (bibtex);
+        \end{minted}
+    \end{onlyenv}
+
+    \begin{onlyenv}%
+    <7>
+        \begin{minted}[style=autumn]{latex}
+\draw[->] ($(biber.east)!0.5!(biber.south east)$) -- ($(2 compile.west)!0.5!(2 compile.north west)$);
+\draw[->] ($(bibtex.east)!0.5!(bibtex.north east)$) -- ($(2 compile.west)!0.5!(2 compile.south west)$);
+        \end{minted}
+    \end{onlyenv}
+
+    \begin{onlyenv}%
+        <2, 4, 6, 8>
+        \begin{center}
+            \advance\leftskip-25pt
+            \vspace{-18pt}
+            \def\colorSetup{ForestGreen}
+            \def\colorCompile{VioletRed}
+            \def\colorBackend{DeepSkyBlue}
+
+            \begin{tikzpicture}
+                [
+                block/.style={rectangle, draw, minimum height=1cm, minimum width=2cm, align=center, thick},
+                init/.style={initial by arrow, initial text=},
+                arrow/.style={->,>=stealth},
+                every initial by arrow/.style=arrow,
+                every accepting by arrow/.style=arrow,
+                ]
+
+                % Frontend Nodes
+                \node[block, init] (biblatex) {BibLaTeX};
+                \node[block, init, below=6cm of biblatex] (natbib) {natbib};
+
+                % Setup Nodes and their descriptions
+                \node[block, below=2.25cm of biblatex.west, anchor=west, draw=\colorSetup] (setup biblatex) {Setup};
+
+                \node[block, above=2.25cm of natbib.west, anchor=west, draw=\colorSetup] (setup natbib) {Setup};
+
+                % Compilation Nodes
+                \node[block, right=0.7cm of setup biblatex, draw=\colorCompile] (1 compile biblatex) {1. Compile};
+                \node[block, right=0.7cm of setup natbib, draw=\colorCompile] (1 compile natbib) {1. Compile};
+
+                % Backend Nodes
+                \node[block, right=1.25cm of 1 compile biblatex, draw=\colorBackend] (biber) {Biber};
+                \node[block, right=1.25cm of 1 compile natbib, draw=\colorBackend] (bibtex) {BibTeX};
+
+                % Last Compilation nodes
+                \node[block, right=2.1cm of $(biber)!0.5!(bibtex)$, accepting by arrow, draw=\colorCompile] (2 compile) {2. Compile};
+
+
+                % Arrows
+                \uncover<2->{\draw[arrow] (biblatex) -- (setup biblatex);}
+                \uncover<2->{\draw[arrow] (natbib) -- (setup natbib);}
+
+                \uncover<4->{\draw[arrow] (setup biblatex) --  (1 compile biblatex);}
+                \uncover<4->{\draw[arrow] (setup natbib) -- (1 compile natbib);}
+
+                \uncover<6->{\draw[arrow] (1 compile biblatex) -- node[above] {.aux} node[below] {.bcf} (biber);}
+                \uncover<6->{\draw[arrow] (1 compile biblatex) -- node[above right=-0.1] {.aux} (bibtex);}
+                \uncover<6->{\draw[arrow] (1 compile natbib) -- node[above] {.aux} (bibtex);}
+
+                \uncover<8->{\draw[arrow] ($(biber.east)!0.5!(biber.south east)$) -- node[above right=0.1cm, xshift=-0.3cm] {.bbl} ($(2 compile.west)!0.5!(2 compile.north west)$);}
+                \uncover<8->{\draw[arrow] ($(bibtex.east)!0.5!(bibtex.north east)$) -- node[below right=0.1cm, xshift=-0.3cm] {.bbl} ($(2 compile.west)!0.5!(2 compile.south west)$);}
+
+            \end{tikzpicture}
+        \end{center}
+    \end{onlyenv}
+
+\end{frame}
+
+
+
+\def\makeNode#1#2{
+
+    \draw[rounded corners] (#2, 0) rectangle (#2+\nodeWidth, \nodeHeight);
+    \path (#2, \nodeHeight) -- (#2+\nodeWidth, \nodeHeight) node[midway, below=0.27] (Text #1) {Node #1};
+    \node[ellipse, draw, below=0.5cm of Text #1] (Prozess #1) {Prozess};
+
+    \begin{scope}[every node/.append style={rounded corners}]
+        \node[rectangle, draw, below=0.5cm of Prozess #1] (IPC #1) {IPC API};
+        \node[rectangle, draw, below=1cm of IPC #1, xshift=-13*#2, minimum width=2.5cm, fill=white] (NIC #1) {NIC};
+        \node[rectangle, draw, above=-0.1cm of NIC #1, xshift=10*#2, minimum width=1cm, fill=white] (Queue #1) {Queue};
+    \end{scope}
+
+    \node[below=2.2cm of Prozess #1, xshift=5*#2] {\makecell{Operating\\ System}};
+}
+
+
+\begin{frame}{Was TikZ so alles kann: Intersections}
+    \begin{center}
+        \begin{tikzpicture}
+            \def\aclr{orange}
+            \def\bclr{red}
+
+            \draw[DeepSkyBlue] (0, 0) circle (2.5);
+            \draw[rotate=-45, draw=\aclr] (-1, 0) ellipse (1.2 and 1.7);
+            \draw[rotate=45, draw=\bclr] (-0.5, -0.3) ellipse (1.5 and 1.9);
+
+            \begin{scope}
+                \clip[rotate=45] (-0.5, -0.3) ellipse (1.5 and 1.9);
+                \clip[rotate=-45] (-1, 0) ellipse (1.2 and 1.7);
+                \draw[rotate=-45, fill=\aclr!50!\bclr, opacity=0.7] (-1, 0) ellipse (1.2 and 1.7);
+            \end{scope}
+
+            \node[\aclr] (A) at (-3, 1.7) {$A$};
+            \draw[bend left=20, -Latex, \aclr] (A) to (-0.5, 1.7);
+
+            \node[\bclr] (B) at (3, -1.7) {$B$};
+            \draw[bend right=20, -Latex, \bclr] (B) to (0.5, -1.7);
+
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}{Was TikZ so alles kann: Prozessdiagramme}
+    \begin{center}
+        \advance\leftskip-7pt
+        \def\nodeWidth{3.5}
+        \def\nodeHeight{5.5}
+        \def\theBuffer{3.5}
+
+        \begin{tikzpicture}
+            [every path/.append style={->, shorten >= 1pt}]
+
+            \makeNode{1}{-\theBuffer}
+            \makeNode{2}{\theBuffer}
+
+            \draw[out=185, in=175, looseness=2.325] (Prozess 1) to node[left, midway] {} (IPC 1);
+            \draw[out=185, in=175, looseness=2.5] (IPC 1) to (Queue 1);
+
+            \draw (NIC 1) to node[midway, above=0.5] (m) {\textcolor{ForestGreen}{Information\mail}} (NIC 2);
+
+            \draw[out=5, in=-5, looseness=2.325] (IPC 2) to node[right, midway] {}(Prozess 2);
+            \draw[out=5, in=-5, looseness=2.5] (Queue 2) to(IPC 2);
+        \end{tikzpicture}
+
+        \vspace{10pt}
+        Bonuspunkte, wenn ihr wisst wo dieses Bild herkommt ;)
+    \end{center}
+\end{frame}
+
+\begin{frame}{Was TikZ so alles kann: Fraktale}
+    \begin{center}
+        \begin{tikzpicture}[decoration=Koch curve type 2]
+            \only<1>{\draw decorate{ (-5,0) -- (5,0) };}
+            \only<2>{\draw decorate{ decorate{ (-5,0) -- (5,0) }};}
+            \only<3>{\draw decorate{ decorate{ decorate{ (-5,0) -- (5,0) }}};}
+%            \only<4>{\draw decorate{ decorate{ decorate{ decorate{ (-5,0) -- (5,0) }}}};}
+        \end{tikzpicture}
+    \end{center}
+
+\end{frame}
+
+
+\begin{frame}{Was TikZ so alles kann: 3d Bilder}
+    % Graciously adopted from the TikZ manual
+    \begin{tikzpicture}
+        [z={(10:10mm)},x={(-45:5mm)}]
+        \def\wave{
+            \draw[fill,thick,fill opacity=.2]
+            (0,0) sin (1,1) cos (2,0) sin (3,-1) cos (4,0)
+            sin (5,1) cos (6,0) sin (7,-1) cos (8,0)
+            sin (9,1) cos (10,0)sin (11,-1)cos (12,0);
+            \foreach \shift in {0,4,8}
+                {
+                \begin{scope}[xshift=\shift cm,thin]
+                    \draw (.5,0)  -- (0.5,0 |- 45:1cm);
+                    \draw (1,0)   -- (1,1);
+                    \draw (1.5,0) -- (1.5,0 |- 45:1cm);
+                    \draw (2.5,0) -- (2.5,0 |- -45:1cm);
+                    \draw (3,0)   -- (3,-1);
+                    \draw (3.5,0) -- (3.5,0 |- -45:1cm);
+                \end{scope}
+            }
+        }
+        \begin{scope}[canvas is zy plane at x=0,fill=blue]
+            \wave
+            \node at (6,-1.5) [transform shape] {magnetic field};
+        \end{scope}
+        \begin{scope}[canvas is zx plane at y=0,fill=red]
+            \draw[help lines] (0,-2) grid (12,2);
+            \wave
+            \node at (6,1.5) [rotate=180,xscale=-1,transform shape] {electric field};
+        \end{scope}
+    \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Was TikZ so alles kann: Mindmaps}
+    \begin{center}
+        \advance\leftskip-20pt
+
+        % Graciously adopted from the TikZ manual
+        \begin{tikzpicture}
+            \path[mindmap,concept color=black,text=white]
+            node[concept] {\makecell{Computer\\Science}}
+            [clockwise from=0]
+            % note that the `concept color' is passed to the `child'(!)
+            child[concept color=blue] {
+                node[concept] {applied}
+                [clockwise from=-30]
+            }
+            % note that `sibling angle' can only be defined in
+            % `level 1 concept/.append style={}'
+            child[concept color=green!50!black] {
+                node[concept] {practical}
+                [clockwise from=35]
+                child { node[concept] {algorithms} }
+                child { node[concept] {data structures} }
+                child { node[concept] {pro\-gramming languages} }
+                child { node[concept] {software engineer\-ing} }
+            }
+            child[concept color=red] { node[concept] {technical} }
+            child[concept color=orange] { node[concept] {theoretical} };
+        \end{tikzpicture}
+
+    \end{center}
+\end{frame}
+
+
+\end{document}

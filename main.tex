@@ -1,0 +1,179 @@
+\documentclass[xcolor=svgnames]{beamer}
+\usetheme{metropolis}
+\setbeamertemplate{section in toc}[sections numbered]
+\setbeamertemplate{footline}{}
+
+\makeatletter
+\setlength{\metropolis@titleseparator@linewidth}{1.42pt}
+\setlength{\metropolis@progressonsectionpage@linewidth}{1.42pt}
+\setlength{\metropolis@progressinheadfoot@linewidth}{1.42pt}
+\makeatother
+
+\pdfcompresslevel=0
+\pdfobjcompresslevel=0
+
+
+\RequirePackage[T1]{fontenc}        %
+\RequirePackage[utf8]{inputenc}     %
+\RequirePackage[ngerman]{babel}     % Set the document language
+\RequirePackage{fancyhdr}           %
+\RequirePackage{geometry}           %
+\RequirePackage{lmodern}            %
+\RequirePackage{amsmath}            % ---
+\RequirePackage{amsfonts}           % The math packages
+\RequirePackage{amssymb}            %
+\RequirePackage{stmaryrd}           % -/-
+\RequirePackage{datetime}           %
+\RequirePackage{trace}              % Package for debugging
+\RequirePackage{pgfkeys}            % This package is for digesting the [key=value] options.
+\RequirePackage{xparse}             % Nice syntax for newcommands
+\RequirePackage[lastpage]{zref}     % Package for the fancy pagenumber
+\RequirePackage{nicefrac}           % Package for the fancy pagenumber
+\RequirePackage{xurl}               % Package for better urls
+\RequirePackage{graphicx}           %
+\RequirePackage{xstring}            % /*
+\RequirePackage{xspace}             %   Logic
+\RequirePackage{ifthen}             %
+\RequirePackage{xifthen}            % */
+\RequirePackage{microtype}          % Micro adjustments for
+\RequirePackage{mathtools}
+\RequirePackage{booktabs}
+\RequirePackage{tabularx}
+\RequirePackage{tikz}
+\RequirePackage{subfiles}
+\RequirePackage{hyperref}           % Make the links colorful!
+\RequirePackage{listings}
+\RequirePackage[outputdir=target]{minted}
+\RequirePackage{ffcode}
+\RequirePackage{makebox}
+\RequirePackage{makecell}
+\RequirePackage{dsfont}
+\RequirePackage{csquotes}           % Nice quotes
+\RequirePackage{pifont}
+\RequirePackage{colortbl}
+\RequirePackage[ngerman]{varioref}
+\RequirePackage[noabbrev, german]{cleveref}
+\RequirePackage{prettyref}
+\RequirePackage{pdfpages}
+\RequirePackage[backend=biber, style=ieee, language=german]{biblatex}
+
+
+\usetikzlibrary{shapes, shapes.misc, automata, positioning, calc, 3d, arrows.meta, patterns, math, fit, animations, decorations.fractals, mindmap}
+\addbibresource{refs.bib}
+
+\lstset{
+    basicstyle=\ttfamily,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{brown},
+    showstringspaces=false,
+    breaklines=true,
+    tabsize=4,
+}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=black!10!blue,
+    citecolor=black!10!blue,
+}
+
+\DefineShortVerb{\|}
+
+\usefonttheme[onlymath]{serif}
+\setlength{\parindent}{0pt}
+
+\def\pfeil#1{\begin{itemize}{\item[$\to$] #1}\end{itemize}}
+\newcommand{\TODO}[1][]{\textcolor{red}{TODO\if\relax\detokenize{#1}\relax\else: #1\fi}}
+
+
+% e, i and π shall be uppercase, even in math-mode
+%  https://physics.nist.gov/cuu/pdf/typefaces.pdf
+\providecommand{\e}{\textrm{e}}
+\renewcommand{\i}{\textrm{i}}
+\providecommand{\pI}{\textrm{$\pi$}}
+
+\newenvironment{metaverbatim}{\verbatim}{\endverbatim}
+
+% Define column types for Left, Right and Center
+\newcolumntype{M}[1]{>{\centering\arraybackslash$}m{#1}<{$}}
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+\def\check{\textcolor{ForestGreen}{\ding{51}}}
+\def\cross{\textcolor{red}{\ding{55}}}
+\def\depends{\textcolor{Goldenrod!80!Gold}{$\sim$}}
+
+
+% TikZ
+
+\makeatletter
+%! Helper macro for the document
+\def\template@tikz@mail@getkey#1#2{\pgfkeysgetvalue{/tikz/mail/#1}{#2}}
+
+\tikzset{
+    mail/.is family,
+    mail,
+    height/.initial=3/2,
+    width/.initial=2,
+    mid point/.initial=1/2,
+    scale factor/.initial=1/8,
+    .pic={
+        % Aquire macros
+        \template@tikz@mail@getkey{height}{\theHeight};
+        \template@tikz@mail@getkey{width}{\theWidth};
+        \template@tikz@mail@getkey{mid point}{\theMidPoint};
+        \template@tikz@mail@getkey{scale factor}{\scale};
+        %
+        % Apply scale
+        \pgfmathsetmacro\theHeight{\theHeight * \scale}
+        \pgfmathsetmacro\theWidth{\theWidth * \scale}
+        \pgfmathsetmacro\theMidPoint{\theMidPoint * \scale}
+        %
+        % Draw
+        \draw[fill=white, draw=white] (-\theWidth, \theHeight) rectangle (\theWidth, -\theHeight);
+        %
+        % Details
+        \draw[-] (-\theWidth, -\theHeight) -- (0, \theMidPoint) -- (\theWidth, -\theHeight);
+        \draw[-, fill=white] (-\theWidth, \theHeight) -- (0 , -\theMidPoint) -- (\theWidth, \theHeight);
+        %
+        % Border
+        \draw[-] (-\theWidth,\theHeight) -- (\theWidth,\theHeight) -- (\theWidth,-\theHeight)
+        -- (-\theWidth, -\theHeight) -- (-\theWidth, \theHeight) -- (\theWidth, \theHeight);
+    }
+}
+
+%! A macro which provides a inline mail icon.
+\newcommand{\mail}[1][1]{
+    \tikz[baseline=-0.5ex] \pic[scale=#1] {mail};
+}
+
+\makeatother
+
+
+\ifdefined\endofdump\else
+\def\endofdump{}
+\fi
+\endofdump
+
+
+
+\title{\LaTeX{} für Fortgeschrittene}
+\subtitle{\vspace{20pt}Praktische Tipps jenseits des Textsatzes --\\Was neben Bildern und Texten noch so geht}
+\author{Emily Seebeck}
+\date{04. Mai 2023}
+
+
+\begin{document}
+
+\subfile{00Intro.tex}
+\subfile{01LaTeXBasicsUndBestPractices.tex}
+\subfile{02LaTeXToolingImVergleich.tex}
+\subfile{03SchnellesKompilieren.tex}
+\subfile{04Bibliographien.tex}
+\subfile{05Beamer.tex}
+\subfile{06TikZ.tex}
+
+
+\end{document}

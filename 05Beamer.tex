@@ -1,0 +1,100 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+\section{Beamer}
+
+\begin{frame}[fragile]{Präsentationen mit \LaTeX}
+    \begin{enumerate}
+        \item Dokumentklasse setzen: \verb|\documentclass{beamer}|
+        \pause
+        \medskip
+        \item Stil wählen: \verb|\usetheme{<stil>}|
+        \begin{itemize}
+            \item metropolis
+            \item Copenhagen
+            \item Berlin
+        \end{itemize}
+        \pause
+        \item Folien erstellen
+        \begin{Verbatim}
+    \begin{frame}{<Titel>}
+        ...
+    \end {frame}
+        \end{Verbatim}
+    \end{enumerate}
+    \pause
+    \begin{itemize}
+        \item Falls Verbatim verwendet wird: Option \verb|[fragile]| verwenden:
+    \end{itemize}
+    \vspace{-10pt}
+    \begin{verbatim}
+        \begin{frame}[fragile]{<Titel>}
+    \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]{Präsentationen mit \LaTeX: Animationen}
+    \begin{itemize}
+        \item Möglich mit dem Befehl \verb|\pause|
+        \item Letzter Schritt vor dem Finalisieren der Präsentation
+        \pause
+        \medskip
+        \begin{verbatim}
+\begin{frame}{Pause-Beispiel}
+    \begin{itemize}
+        \item Erster Punkt
+        \pause
+        \item Zweiter Punkt
+        \pause
+        \item Dritter Punkt
+    \end{itemize}
+\end {frame}
+        \end{verbatim}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Pause-Beispiel}
+    \begin{itemize}
+        \item Erster Punkt
+        \pause
+        \item Zweiter Punkt
+        \pause
+        \item Dritter Punkt
+    \end{itemize}
+\end {frame}
+
+\begin{frame}[fragile]{Präsentationen mit \LaTeX: Animationen}
+    \begin{itemize}
+        \item \textcolor{red}{Aber:} \verb|\pause| kann nur Dinge einblenden, nicht ausblenden
+        \medskip
+        \pause
+        \item Mehr \href{https://tex.stackexchange.com/a/684646}{Commands}
+        \begin{itemize}
+            \item \verb|\uncover<2->|
+            \item \verb|\only<3, 4>|
+        \end{itemize}
+        \pause
+        \medskip
+        \begin{verbatim}
+\begin{frame}{Animations-Beispiel}
+    \begin{itemize}
+        \uncover<1->{\item Erster Punkt}
+        \only<2-3>{\item Zweiter Punkt}
+        \uncover<3->{\item Dritter Punkt}
+        \only<5-6>{\item Vierter Punkt}
+    \end{itemize}
+\end {frame}
+        \end{verbatim}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Animations-Beispiel}
+    \begin{itemize}
+        \uncover<1->{\item Erster Punkt}
+        \only<2-3>{\item Zweiter Punkt}
+        \uncover<3->{\item Dritter Punkt}
+        \only<5>{\item Vierter Punkt}
+    \end{itemize}
+\end{frame}
+
+
+\end{document}
