@@ -534,10 +534,30 @@ fn is_palindrome(s: &str) -> bool {
         \end{itemize}
     \end{itemize}
 \end{frame}
-%
-%\begin{frame}[fragile]{\LaTeX{} Mathe Basics: Spacing}
-%    \TODO
-%\end{frame}
+
+\begin{frame}[fragile]{\LaTeX{} Mathe Basics: Spacing}
+    \begin{itemize}
+        \item \LaTeX{} fügt automatisch Spacing im Mathe-Modus ein
+        \item Manchmal möchte man das aber auch anpassen
+    \end{itemize}
+
+    \begin{table}
+        \centering
+        \begin{tabular}{ll}
+            \verb|f(x) &= x^2\! +3x\! +2| & $f(x) = x^2\! +3x\! +2$ \\
+            \verb|f(x) &= x^2+3x+2|      & $f(x) = x^2+3x+2$ \\
+            \verb|f(x) &= x^2\, +3x\, +2| & $f(x) = x^2\, +3x\, +2$ \\
+            \verb|f(x) &= x^2\: +3x\: +2| & $f(x) = x^2\: +3x\: +2$ \\
+            \verb|f(x) &= x^2\; +3x\; +2| & $f(x) = x^2\; +3x\; +2$ \\
+            \verb|f(x) &= x^2\ +3x\ +2|  & $f(x) = x^2\ +3x\ +2$ \\
+            \verb|f(x) &= x^2\quad +3x\quad +2| & $f(x) = x^2\quad +3x\quad +2$
+        \end{tabular}
+    \end{table}
+
+    \begin{itemize}
+        \item Oder: Custom Abstand mit \verb|\mspace{...}| und \verb|\hspace{...}|
+    \end{itemize}
+\end{frame}
 
 % Diese Folie ist noch WIP
 \begin{frame}<0>[fragile]{\LaTeX{} Mathe Basics: Normalen Text schreiben}
